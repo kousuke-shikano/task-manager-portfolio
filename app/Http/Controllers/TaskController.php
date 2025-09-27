@@ -2,81 +2,90 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Models\Task;
 
 class TaskController extends Controller
 {
-    // タスク一覧表示
+    /**
+     * タスク一覧を表示
+     */
     public function index()
     {
-        // DBから全タスク取得（取得してビューに渡す）
-        $tasks = Task::orderBy('created_at', 'desc')->get();
-        return view('tasks.index', compact('tasks'));
+        $tasks = Task::all(); // DBから全タスク取得
+        return view('tasks.index', compact('tasks')); // ビューに渡す
     }
 
-    // 新規作成フォーム表示
+    /**
+     * 新規タスク作成フォーム表示
+     */
     public function create()
     {
         return view('tasks.create');
     }
 
-    // 新規タスク保存
+    /**
+     * 新しいタスクをDBに保存
+     */
     public function store(Request $request)
     {
-        // バリデーション
         $request->validate([
-            'title' => 'required|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
 
-        // タスク作成
+        // 仮に user_id を 1 として挿入
         Task::create([
             'title' => $request->title,
             'description' => $request->description,
             'due_date' => $request->due_date,
+            'user_id' => 1, // 認証導入前の暫定値
         ]);
-        //保存後は一覧にリダイレクト
+
         return redirect()->route('tasks.index')->with('success', 'タスクを作成しました');
     }
 
-    // タスク詳細表示
+    /**
+     * タスク詳細表示
+     */
     public function show(Task $task)
     {
-        return view('tasks.show', compact('task')); 
+        return view('tasks.show', compact('task'));
     }
 
-    // 編集フォーム表示
+    /**
+     * 編集フォーム表示
+     */
     public function edit(Task $task)
     {
         return view('tasks.edit', compact('task'));
     }
 
-    // タスク更新
+    /**
+     * 編集内容をDBに保存
+     */
     public function update(Request $request, Task $task)
     {
-        // バリデーション
         $request->validate([
             'title' => 'required|max:255',
-            'description' => 'nullable|string',
-            'due_date' => 'nullable|date',
+            'description' => 'nullable',
         ]);
 
-        // 更新
         $task->update([
             'title' => $request->title,
             'description' => $request->description,
-            'due_date' => $request->due_date,
         ]);
 
         return redirect()->route('tasks.index')->with('success', 'タスクを更新しました');
     }
 
-    // タスク削除
+    /**
+     * タスク削除
+     */
     public function destroy(Task $task)
     {
-        $task->delete();
+        $task->delete(); // 論理削除にする場合は softDelete
         return redirect()->route('tasks.index')->with('success', 'タスクを削除しました');
     }
 }

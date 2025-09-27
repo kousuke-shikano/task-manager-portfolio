@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            //主キー
-
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             // このタスクを所有するユーザーのID
             // 'constrained()' は users テーブルを参照する外部キーを作成

@@ -10,18 +10,19 @@
 
     <form action="{{ route('tasks.store') }}" method="POST">
         @csrf
-
         <div>
             <label for="title">タイトル:</label>
             <input type="text" name="title" id="title" value="{{ old('title') }}" required>
-            @error('title')
-                <p style="color:red;">{{ $message }}</p>
-            @enderror
         </div>
 
         <div>
             <label for="description">説明:</label>
             <textarea name="description" id="description">{{ old('description') }}</textarea>
+        </div>
+
+        <div>
+            <label for="due_date">期限日:</label>
+            <input type="date" name="due_date" id="due_date" value="{{ old('due_date') }}">
         </div>
 
         <button type="submit">保存</button>
