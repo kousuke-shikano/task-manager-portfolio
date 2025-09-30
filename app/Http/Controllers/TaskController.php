@@ -12,6 +12,8 @@ class TaskController extends Controller
      */
     public function index()
     {
+        // ログイン未実装なので仮で user_id = 1 のタスクを取得
+        $tasks = \App\Models\Task::where('user_id', 1)->get();
         $tasks = Task::all(); // DBから全タスク取得
         return view('tasks.index', compact('tasks')); // ビューに渡す
     }
@@ -49,11 +51,13 @@ class TaskController extends Controller
     /**
      * タスク詳細表示
      */
-    public function show(Task $task)
+    public function show($id)
     {
+        // 仮で user_id = 1 の制約を入れる
+        $task = \App\Models\Task::where('user_id', 1)->findOrFail($id);
+
         return view('tasks.show', compact('task'));
     }
-
     /**
      * 編集フォーム表示
      */
