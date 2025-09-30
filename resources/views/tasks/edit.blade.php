@@ -1,33 +1,32 @@
-{{-- resources/views/tasks/edit.blade.php --}}
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>タスク編集</title>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
     <h1>タスク編集</h1>
 
     <form action="{{ route('tasks.update', $task->id) }}" method="POST">
         @csrf
-        @method('PUT') {{-- Laravelで更新時に必要 --}}
+        @method('PUT')
 
-        <div>
-            <label for="title">タイトル:</label>
-            <input type="text" name="title" id="title" value="{{ old('title', $task->title) }}" required>
-            @error('title')
-                <p style="color:red;">{{ $message }}</p>
-            @enderror
+        <div class="mb-3">
+            <label for="title" class="form-label">タイトル</label>
+            <input type="text" name="title" id="title" class="form-control"
+                   value="{{ old('title', $task->title) }}" required>
         </div>
 
-        <div>
-            <label for="description">説明:</label>
-            <textarea name="description" id="description">{{ old('description', $task->description) }}</textarea>
+        <div class="mb-3">
+            <label for="description" class="form-label">内容</label>
+            <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $task->description) }}</textarea>
         </div>
 
-        <button type="submit">更新</button>
+        <div class="mb-3">
+            <label for="due_date" class="form-label">期限</label>
+            <input type="date" name="due_date" id="due_date" class="form-control"
+                   value="{{ old('due_date', $task->due_date) }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">更新</button>
+        <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-secondary">戻る</a>
     </form>
-
-    <a href="{{ route('tasks.index') }}">戻る</a>
-</body>
-</html>
+</div>
+@endsection

@@ -63,25 +63,37 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
+        // user_id のチェックを入れる場合
+        if ($task->user_id !== 1) {
+            abort(403, 'このタスクを編集する権限がありません');
+        }
+
         return view('tasks.edit', compact('task'));
     }
-
     /**
      * 編集内容をDBに保存
      */
     public function update(Request $request, Task $task)
     {
+        // ユーザー確認（必要なら）
+        if ($task->user_id !== 1) {
+            abort(403, 'このタスクを編集する権限がありません');
+        }
+
         $request->validate([
             'title' => 'required|max:255',
             'description' => 'nullable',
+            'due_date' => 'nullable|date',
         ]);
 
         $task->update([
             'title' => $request->title,
             'description' => $request->description,
+            'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('tasks.index')->with('success', 'タスクを更新しました');
+        return redirect()->route('tasks.show', $task->id)
+                        ->with('success', 'タスクを更新しました。');
     }
 
     /**
