@@ -1,52 +1,34 @@
-@extends('layouts.app')
+<x-app-layout>
+    <div class="container mx-auto py-8 px-4">
+        <h1 class="text-2xl font-bold mb-4">タスク詳細</h1>
 
-@section('content')
-<div class="container">
-    <h1>タスク詳細</h1>
+        <div class="bg-white shadow rounded p-4 mb-4">
+            <h2 class="text-xl font-semibold mb-2">{{ $task->title }}</h2>
+            <p class="mb-2">{{ $task->description }}</p>
+            <p class="mb-2"><strong>期限:</strong> {{ $task->due_date }}</p>
 
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">{{ $task->title }}</h5>
-            <p class="card-text">{{ $task->description }}</p>
-            <p class="card-text"><strong>期限:</strong> {{ $task->due_date }}</p>
-
-            {{-- 優先度 --}}
-            <p class="card-text">
-                <strong>優先度:</strong>
-                <span class="badge
-                    @if($task->priority == 'high') bg-danger
-                    @elseif($task->priority == 'medium') bg-warning text-dark
-                    @else bg-success
-                    @endif
-                ">
-                    @if($task->priority == 'high') 高
-                    @elseif($task->priority == 'medium') 中
-                    @else 低
-                    @endif
+            <p class="mb-2"><strong>優先度:</strong>
+                <span class="px-2 py-1 rounded
+                    {{ $task->priority == 'high' ? 'bg-red-500 text-white' : '' }}
+                    {{ $task->priority == 'medium' ? 'bg-yellow-300 text-black' : '' }}
+                    {{ $task->priority == 'low' ? 'bg-green-500 text-white' : '' }}">
+                    {{ $task->priority == 'high' ? '高' : ($task->priority == 'medium' ? '中' : '低') }}
                 </span>
             </p>
 
-            {{-- ステータス --}}
-            <p class="card-text">
-                <strong>ステータス:</strong>
-                <span class="badge
-                    @if($task->status == 'pending') bg-secondary
-                    @elseif($task->status == 'in_progress') bg-info text-dark
-                    @else bg-success
-                    @endif
-                ">
-                    @if($task->status == 'pending') 未着手
-                    @elseif($task->status == 'in_progress') 進行中
-                    @else 完了
-                    @endif
+            <p class="mb-2"><strong>ステータス:</strong>
+                <span class="px-2 py-1 rounded
+                    {{ $task->status == 'pending' ? 'bg-gray-400 text-white' : '' }}
+                    {{ $task->status == 'in_progress' ? 'bg-blue-300 text-black' : '' }}
+                    {{ $task->status == 'done' ? 'bg-green-500 text-white' : '' }}">
+                    {{ $task->status == 'pending' ? '未着手' : ($task->status == 'in_progress' ? '進行中' : '完了') }}
                 </span>
             </p>
 
-            <p class="card-text"><small class="text-muted">作成日: {{ $task->created_at }}</small></p>
+            <p class="text-gray-500 text-sm">作成日: {{ $task->created_at }}</p>
         </div>
-    </div>
 
-    <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">編集</a>
-    <a href="{{ route('tasks.index') }}" class="btn btn-secondary">一覧に戻る</a>
-</div>
-@endsection
+        <a href="{{ route('tasks.edit', $task->id) }}" class="bg-yellow-300 hover:bg-yellow-400 text-black px-4 py-2 rounded">編集</a>
+        <a href="{{ route('tasks.index') }}" class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded">一覧に戻る</a>
+    </div>
+</x-app-layout>
