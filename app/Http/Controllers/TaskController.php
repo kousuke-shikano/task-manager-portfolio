@@ -82,21 +82,15 @@ class TaskController extends Controller
             abort(403, 'このタスクを編集する権限がありません');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|max:255',
             'description' => 'nullable',
             'due_date' => 'nullable|date',
             'priority' => 'required|in:low,medium,high',
-            // ← status は削除
+            'status' => 'required|in:pending,in_progress,done', // ← 追加
         ]);
 
-        $task->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'due_date' => $request->due_date,
-            'priority' => $request->priority,
-            // ← status は更新しない
-        ]);
+        $task->update($validated);
 
         return redirect()->route('tasks.show', $task->id)
                         ->with('success', 'タスクを更新しました。');

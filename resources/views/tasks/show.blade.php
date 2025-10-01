@@ -7,39 +7,39 @@
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">{{ $task->title }}</h5>
-
             <p class="card-text">{{ $task->description }}</p>
+            <p class="card-text"><strong>期限:</strong> {{ $task->due_date }}</p>
 
-            <p class="card-text">
-                <strong>期限:</strong> {{ $task->due_date ?? '未設定' }}
-            </p>
-
-            {{-- ステータス表示 --}}
-            <p class="card-text">
-                <strong>ステータス:</strong>
-                @php
-                    $statusClass = match($task->status) {
-                        'pending' => 'badge bg-secondary',
-                        'in_progress' => 'badge bg-primary',
-                        'done' => 'badge bg-success',
-                        default => 'badge bg-light',
-                    };
-                @endphp
-                <span class="{{ $statusClass }}">{{ ucfirst($task->status) }}</span>
-            </p>
-
-            {{-- 優先度表示 --}}
+            {{-- 優先度 --}}
             <p class="card-text">
                 <strong>優先度:</strong>
-                @php
-                    $priorityClass = match($task->priority) {
-                        'low' => 'badge bg-info',
-                        'medium' => 'badge bg-warning text-dark',
-                        'high' => 'badge bg-danger',
-                        default => 'badge bg-light',
-                    };
-                @endphp
-                <span class="{{ $priorityClass }}">{{ ucfirst($task->priority) }}</span>
+                <span class="badge
+                    @if($task->priority == 'high') bg-danger
+                    @elseif($task->priority == 'medium') bg-warning text-dark
+                    @else bg-success
+                    @endif
+                ">
+                    @if($task->priority == 'high') 高
+                    @elseif($task->priority == 'medium') 中
+                    @else 低
+                    @endif
+                </span>
+            </p>
+
+            {{-- ステータス --}}
+            <p class="card-text">
+                <strong>ステータス:</strong>
+                <span class="badge
+                    @if($task->status == 'pending') bg-secondary
+                    @elseif($task->status == 'in_progress') bg-info text-dark
+                    @else bg-success
+                    @endif
+                ">
+                    @if($task->status == 'pending') 未着手
+                    @elseif($task->status == 'in_progress') 進行中
+                    @else 完了
+                    @endif
+                </span>
             </p>
 
             <p class="card-text"><small class="text-muted">作成日: {{ $task->created_at }}</small></p>
@@ -47,20 +47,6 @@
     </div>
 
     <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">編集</a>
-    <form action="{{ route('tasks.updateStatus', $task->id) }}" method="POST" class="d-inline">
-        @csrf
-        @method('PATCH')
-        <input type="hidden" name="status" value="done">
-        <button type="submit" class="btn btn-success btn-sm">完了にする</button>
-    </form>
-
-    <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger"
-            onclick="return confirm('削除してよろしいですか？')">削除</button>
-    </form>
-
     <a href="{{ route('tasks.index') }}" class="btn btn-secondary">一覧に戻る</a>
 </div>
 @endsection
