@@ -12,11 +12,16 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Task::where('user_id', 1); // 仮で user_id=1
+        $query = Task::where('user_id', 1);
 
-        // フィルタリング
-        if ($request->has('priority') && in_array($request->priority, ['low','medium','high'])) {
+        // 優先度フィルタ
+        if ($request->filled('priority')) {
             $query->where('priority', $request->priority);
+        }
+
+        // ステータスフィルタ
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         $tasks = $query->get();

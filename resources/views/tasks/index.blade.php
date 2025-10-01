@@ -8,18 +8,30 @@
 
     @if($tasks->isEmpty())
         <p>まだタスクがありません。</p>
-        
+
     {{-- フィルタ解除ボタン --}}
         <a href="{{ route('tasks.index') }}" class="btn btn-secondary">一覧に戻る</a>
     @else
-        <form method="GET" action="{{ route('tasks.index') }}" class="mb-3">
-            <label for="priorityFilter">優先度で絞り込み:</label>
-            <select name="priority" id="priorityFilter" onchange="this.form.submit()">
-                <option value="">全て</option>
+        <form method="GET" action="{{ route('tasks.index') }}" class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+            {{-- 優先度フィルタ --}}
+            <select name="priority" class="form-select form-select-sm" style="width: auto;">
+                <option value="">優先度すべて</option>
                 <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>低</option>
                 <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>中</option>
                 <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>高</option>
             </select>
+
+            {{-- ステータスフィルタ --}}
+            <select name="status" class="form-select form-select-sm" style="width: auto;">
+                <option value="">ステータスすべて</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>未着手</option>
+                <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>進行中</option>
+                <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>完了</option>
+            </select>
+
+            {{-- ボタン --}}
+            <button type="submit" class="btn btn-primary btn-sm">絞り込み</button>
+            <a href="{{ route('tasks.index') }}" class="btn btn-secondary btn-sm">リセット</a>
         </form>
 
         <table class="table table-bordered">
