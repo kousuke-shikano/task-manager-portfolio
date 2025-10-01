@@ -12,7 +12,11 @@
             <a class="nav-link text-light" href="{{ route('tasks.index') }}">タスク一覧</a>
         </div>
     </nav>
-
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
     <main>
         @yield('content')
     </main>
