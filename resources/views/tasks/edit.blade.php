@@ -19,6 +19,15 @@
             <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $task->description) }}</textarea>
         </div>
 
+        <div>
+            <label for="priority">優先度:</label>
+            <select name="priority" id="priority">
+                    <option value="low" {{ old('priority', $task->priority ?? '') == 'low' ? 'selected' : '' }}>低</option>
+                    <option value="medium" {{ old('priority', $task->priority ?? 'medium') == 'medium' ? 'selected' : '' }}>中</option>
+                    <option value="high" {{ old('priority', $task->priority ?? '') == 'high' ? 'selected' : '' }}>高</option>
+            </select>
+        </div>
+
         <div class="mb-3">
             <label for="due_date" class="form-label">期限</label>
             <input type="date" name="due_date" id="due_date" class="form-control"

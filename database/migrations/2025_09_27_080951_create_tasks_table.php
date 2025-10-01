@@ -27,6 +27,9 @@ return new class extends Migration
             $table->enum('status', ['pending','in_progress','done'])->default('pending');
             // タスクの状態（未着手、進行中、完了）
 
+            $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
+            // タスクの優先度（低、中、高）
+
             $table->date('due_date')->nullable();
             // タスクの期限日（任意）
 

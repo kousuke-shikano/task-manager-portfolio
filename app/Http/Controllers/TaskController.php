@@ -42,7 +42,9 @@ class TaskController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'due_date' => $request->due_date,
-            'user_id' => 1, // 認証導入前の暫定値
+            'status' => $request->status ?? 'pending',   // 既存
+            'priority' => $request->priority ?? 'medium', // ← 追加
+            'user_id' => 1,// 認証導入前の暫定値
         ]);
 
         return redirect()->route('tasks.index')->with('success', 'タスクを作成しました');
@@ -84,17 +86,22 @@ class TaskController extends Controller
             'title' => 'required|max:255',
             'description' => 'nullable',
             'due_date' => 'nullable|date',
+            'priority' => 'required|in:low,medium,high',
+            // ← status は削除
         ]);
 
         $task->update([
             'title' => $request->title,
             'description' => $request->description,
             'due_date' => $request->due_date,
+            'priority' => $request->priority,
+            // ← status は更新しない
         ]);
 
         return redirect()->route('tasks.show', $task->id)
                         ->with('success', 'タスクを更新しました。');
     }
+
 
     /**
      * タスク削除
@@ -103,5 +110,20 @@ class TaskController extends Controller
     {
         $task->delete(); // 論理削除にする場合は softDelete
         return redirect()->route('tasks.index')->with('success', 'タスクを削除しました');
+    }
+    /**
+     * タスクのステータス更新
+     */
+    public function updateStatus(Request $request, Task $task)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,in_progress,done',
+        ]);
+
+        $task->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('tasks.index')->with('success', 'ステータスを更新しました');
     }
 }

@@ -14,6 +14,7 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
+                    <th>優先度</th>
                     <th>期限</th>
                     <th>操作</th>
                 </tr>
@@ -23,6 +24,7 @@
                     <tr>
                         <td>{{ $task->id }}</td>
                         <td>{{ $task->title }}</td>
+                        <td>{{ $task->priority }}</td>
                         <td>{{ $task->due_date }}</td>
                         <td>
                             <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-info btn-sm">詳細</a>

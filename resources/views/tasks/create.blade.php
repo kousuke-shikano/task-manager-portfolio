@@ -21,6 +21,15 @@
         </div>
 
         <div>
+            <label for="priority">優先度:</label>
+            <select name="priority" id="priority">
+                <option value="low" {{ old('priority', $task->priority ?? '') == 'low' ? 'selected' : '' }}>低</option>
+                <option value="medium" {{ old('priority', $task->priority ?? 'medium') == 'medium' ? 'selected' : '' }}>中</option>
+                <option value="high" {{ old('priority', $task->priority ?? '') == 'high' ? 'selected' : '' }}>高</option>
+            </select>
+        </div>
+
+        <div>
             <label for="due_date">期限日:</label>
             <input type="date" name="due_date" id="due_date" value="{{ old('due_date') }}">
         </div>
