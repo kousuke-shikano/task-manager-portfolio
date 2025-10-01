@@ -8,15 +8,22 @@ use App\Models\Task;
 class TaskController extends Controller
 {
     /**
-     * タスク一覧を表示
+     * タスク一覧を表示,フィルタリングとソート機能追加
      */
-    public function index()
+    public function index(Request $request)
     {
-        // ログイン未実装なので仮で user_id = 1 のタスクを取得
-        $tasks = \App\Models\Task::where('user_id', 1)->get();
-        $tasks = Task::all(); // DBから全タスク取得
-        return view('tasks.index', compact('tasks')); // ビューに渡す
+        $query = Task::where('user_id', 1); // 仮で user_id=1
+
+        // フィルタリング
+        if ($request->has('priority') && in_array($request->priority, ['low','medium','high'])) {
+            $query->where('priority', $request->priority);
+        }
+
+        $tasks = $query->get();
+
+        return view('tasks.index', compact('tasks'));
     }
+
 
     /**
      * 新規タスク作成フォーム表示

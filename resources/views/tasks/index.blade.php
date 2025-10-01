@@ -8,7 +8,20 @@
 
     @if($tasks->isEmpty())
         <p>まだタスクがありません。</p>
+        
+    {{-- フィルタ解除ボタン --}}
+        <a href="{{ route('tasks.index') }}" class="btn btn-secondary">一覧に戻る</a>
     @else
+        <form method="GET" action="{{ route('tasks.index') }}" class="mb-3">
+            <label for="priorityFilter">優先度で絞り込み:</label>
+            <select name="priority" id="priorityFilter" onchange="this.form.submit()">
+                <option value="">全て</option>
+                <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>低</option>
+                <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>中</option>
+                <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>高</option>
+            </select>
+        </form>
+
         <table class="table table-bordered">
             <thead>
                 <tr>
