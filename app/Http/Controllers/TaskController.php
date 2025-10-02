@@ -2,24 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Task;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 class TaskController extends Controller
 {
+    // ログイン必須にする
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
-     * タスク一覧を表示,フィルタリングとソート機能追加
+     * タスク一覧
      */
     public function index(Request $request)
     {
-        $query = Task::where('user_id', 1);
+        $query = Task::where('user_id', Auth::id());
 
-        // 優先度フィルタ
         if ($request->filled('priority')) {
             $query->where('priority', $request->priority);
         }
 
-        // ステータスフィルタ
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -29,9 +34,8 @@ class TaskController extends Controller
         return view('tasks.index', compact('tasks'));
     }
 
-
     /**
-     * 新規タスク作成フォーム表示
+     * 新規作成フォーム
      */
     public function create()
     {
@@ -39,97 +43,98 @@ class TaskController extends Controller
     }
 
     /**
-     * 新しいタスクをDBに保存
+     * タスク保存
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
+            'priority' => 'nullable|in:low,medium,high',
+            'status' => 'nullable|in:pending,in_progress,done',
         ]);
 
-        // 仮に user_id を 1 として挿入
-        Task::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'due_date' => $request->due_date,
-            'status' => $request->status ?? 'pending',   // 既存
-            'priority' => $request->priority ?? 'medium', // ← 追加
-            'user_id' => 1,// 認証導入前の暫定値
-        ]);
+        $validated['user_id'] = Auth::id();
+        $validated['priority'] = $validated['priority'] ?? 'medium';
+        $validated['status'] = $validated['status'] ?? 'pending';
+
+        Task::create($validated);
 
         return redirect()->route('tasks.index')->with('success', 'タスクを作成しました');
     }
 
     /**
-     * タスク詳細表示
+     * タスク詳細
      */
-    public function show($id)
+    public function show(Task $task)
     {
-        // 仮で user_id = 1 の制約を入れる
-        $task = \App\Models\Task::where('user_id', 1)->findOrFail($id);
-
+        $this->authorizeTask($task);
         return view('tasks.show', compact('task'));
     }
+
     /**
-     * 編集フォーム表示
+     * 編集フォーム
      */
     public function edit(Task $task)
     {
-        // user_id のチェックを入れる場合
-        if ($task->user_id !== 1) {
-            abort(403, 'このタスクを編集する権限がありません');
-        }
-
+        $this->authorizeTask($task);
         return view('tasks.edit', compact('task'));
     }
+
     /**
-     * 編集内容をDBに保存
+     * タスク更新
      */
     public function update(Request $request, Task $task)
     {
-        // ユーザー確認（必要なら）
-        if ($task->user_id !== 1) {
-            abort(403, 'このタスクを編集する権限がありません');
-        }
+        $this->authorizeTask($task);
 
         $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'nullable',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:pending,in_progress,done', // ← 追加
+            'status' => 'required|in:pending,in_progress,done',
         ]);
 
         $task->update($validated);
 
-        return redirect()->route('tasks.show', $task->id)
-                        ->with('success', 'タスクを更新しました。');
+        return redirect()->route('tasks.show', $task)->with('success', 'タスクを更新しました');
     }
-
 
     /**
      * タスク削除
      */
     public function destroy(Task $task)
     {
-        $task->delete(); // 論理削除にする場合は softDelete
+        $this->authorizeTask($task);
+        $task->delete();
         return redirect()->route('tasks.index')->with('success', 'タスクを削除しました');
     }
+
     /**
-     * タスクのステータス更新
+     * ステータス更新
      */
     public function updateStatus(Request $request, Task $task)
     {
-        $request->validate([
+        $this->authorizeTask($task);
+
+        $validated = $request->validate([
             'status' => 'required|in:pending,in_progress,done',
         ]);
 
-        $task->update([
-            'status' => $request->status,
-        ]);
+        $task->update(['status' => $validated['status']]);
 
         return redirect()->route('tasks.index')->with('success', 'ステータスを更新しました');
+    }
+
+    /**
+     * 自分のタスクかどうか確認
+     */
+    private function authorizeTask(Task $task)
+    {
+        if ($task->user_id !== Auth::id()) {
+            abort(403, 'このタスクを操作する権限がありません');
+        }
     }
 }
