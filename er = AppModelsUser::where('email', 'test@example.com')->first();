@@ -1,0 +1,25 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#2045
+    [34mall[39m: [
+      [34;4mApp\Models\User[39;24m {#6505
+        [34mid[39m: [35m1[39m,
+        [34mname[39m: "[32mテストユーザー[39m",
+        [34memail[39m: "[32mtest@example.com[39m",
+        [34memail_verified_at[39m: [36mnull[39m,
+        #[33mpassword[39m: "[32m$2y$12$w.IrutaBGx4JSQfbAMh1nunK7vXZyKr2/7gESJYcHHOFzJ/8xWDbm[39m",
+        #[33mremember_token[39m: [36mnull[39m,
+        [34mcreated_at[39m: "[32m2025-09-30 14:38:38[39m",
+        [34mupdated_at[39m: "[32m2025-09-30 14:38:38[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#6504
+        [34mid[39m: [35m2[39m,
+        [34mname[39m: "[32mtest[39m",
+        [34memail[39m: "[32mtest@test.com[39m",
+        [34memail_verified_at[39m: [36mnull[39m,
+        #[33mpassword[39m: "[32m$2y$12$vSsE2lXKPOEyMqSXaFK89OfSp3U1KhqNTJCt21t43hhCPlaDndbwG[39m",
+        #[33mremember_token[39m: [36mnull[39m,
+        [34mcreated_at[39m: "[32m2025-10-01 08:32:01[39m",
+        [34mupdated_at[39m: "[32m2025-10-01 08:32:01[39m",
+      },
+    ],
+  }
+
